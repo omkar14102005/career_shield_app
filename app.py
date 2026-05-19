@@ -4,7 +4,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 import matplotlib.pyplot as plt
 
-# PAGE CONFIG
+# PAGE
 st.set_page_config(
     page_title="AI Fake Job Detector",
     layout="wide"
@@ -12,7 +12,9 @@ st.set_page_config(
 
 # LOAD CSS
 def load_css():
+
     with open("style.css") as f:
+
         st.markdown(
             f"<style>{f.read()}</style>",
             unsafe_allow_html=True
@@ -22,6 +24,7 @@ load_css()
 
 # SESSION
 if "logged_in" not in st.session_state:
+
     st.session_state.logged_in = False
 
 # MODEL
@@ -31,6 +34,7 @@ def load_model():
     data = pd.read_csv("jobs.csv")
 
     X = data["description"]
+
     y = data["label"]
 
     vectorizer = TfidfVectorizer()
@@ -49,6 +53,7 @@ vectorizer, model, data = load_model()
 def login_page():
 
     st.markdown("""
+
     <div class="login-container">
 
         <div class="security-box">
@@ -67,9 +72,10 @@ def login_page():
         </div>
 
         <div class="form-box glass">
+
     """, unsafe_allow_html=True)
 
-    st.title("🔐 Welcome Back")
+    st.title("🔐 Secure Login")
 
     username = st.text_input("Username")
 
@@ -90,10 +96,18 @@ def login_page():
 
             st.error("Wrong Credentials")
 
-    st.markdown("</div></div>", unsafe_allow_html=True)
+    st.markdown(
+        "</div></div>",
+        unsafe_allow_html=True
+    )
 
 # DASHBOARD
 def dashboard():
+
+    st.markdown(
+        '<div class="dashboard-bg">',
+        unsafe_allow_html=True
+    )
 
     st.sidebar.title("🛡 AI Security")
 
@@ -103,21 +117,19 @@ def dashboard():
             "Dashboard",
             "Live Scan",
             "Analytics",
-            "Network",
             "Logout"
         ]
     )
 
-    # DASHBOARD
+    # HOME
     if page == "Dashboard":
 
-        st.markdown("<div class='glass'>", unsafe_allow_html=True)
-
-        st.title("📊 Security Dashboard")
+        st.title("📊 AI Threat Dashboard")
 
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
+
             st.markdown("""
             <div class="metric-card">
             <h2>1,248</h2>
@@ -126,6 +138,7 @@ def dashboard():
             """, unsafe_allow_html=True)
 
         with col2:
+
             st.markdown("""
             <div class="metric-card">
             <h2>842</h2>
@@ -134,6 +147,7 @@ def dashboard():
             """, unsafe_allow_html=True)
 
         with col3:
+
             st.markdown("""
             <div class="metric-card">
             <h2>406</h2>
@@ -142,6 +156,7 @@ def dashboard():
             """, unsafe_allow_html=True)
 
         with col4:
+
             st.markdown("""
             <div class="metric-card">
             <h2>98%</h2>
@@ -149,12 +164,8 @@ def dashboard():
             </div>
             """, unsafe_allow_html=True)
 
-        st.markdown("</div>", unsafe_allow_html=True)
-
     # LIVE SCAN
     elif page == "Live Scan":
-
-        st.markdown("<div class='glass'>", unsafe_allow_html=True)
 
         st.title("🛰 Live Job Scan")
 
@@ -176,18 +187,14 @@ def dashboard():
 
             if result.lower() == "fake":
 
-                risk = 78
-
                 st.error(
-                    f"❌ HIGH RISK JOB ({risk}%)"
+                    "❌ HIGH RISK JOB DETECTED"
                 )
 
             else:
 
-                risk = 18
-
                 st.success(
-                    f"✅ SAFE JOB ({risk}%)"
+                    "✅ SAFE JOB DETECTED"
                 )
 
             st.subheader("Risk Meter")
@@ -196,12 +203,8 @@ def dashboard():
             <div class="risk-meter"></div>
             """, unsafe_allow_html=True)
 
-        st.markdown("</div>", unsafe_allow_html=True)
-
     # ANALYTICS
     elif page == "Analytics":
-
-        st.markdown("<div class='glass'>", unsafe_allow_html=True)
 
         st.title("📈 Threat Analytics")
 
@@ -217,26 +220,6 @@ def dashboard():
 
         st.pyplot(fig)
 
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # NETWORK
-    elif page == "Network":
-
-        st.markdown("<div class='glass'>", unsafe_allow_html=True)
-
-        st.title("🌍 Jobs Network")
-
-        st.image(
-            "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5",
-            use_container_width=True
-        )
-
-        st.write(
-            "Global AI scam intelligence and live threat mapping."
-        )
-
-        st.markdown("</div>", unsafe_allow_html=True)
-
     # LOGOUT
     elif page == "Logout":
 
@@ -244,8 +227,16 @@ def dashboard():
 
         st.rerun()
 
+    st.markdown(
+        "</div>",
+        unsafe_allow_html=True
+    )
+
 # ROUTING
 if st.session_state.logged_in:
+
     dashboard()
+
 else:
+
     login_page()
