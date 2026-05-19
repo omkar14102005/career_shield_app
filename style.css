@@ -1,0 +1,56 @@
+/* BACKGROUND IMAGE (HACKER / CODING VIBE) */
+.stApp {
+    background-image: url("https://images.unsplash.com/photo-1550751827-4bd374c3f58b");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* DARK OVERLAY */
+.stApp::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0,0,0,0.65);
+    z-index: 0;
+}
+
+/* CONTENT ABOVE BACKGROUND */
+.block-container {
+    position: relative;
+    z-index: 2;
+}
+
+/* LOGIN BOX */
+.login-box {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    padding: 25px;
+    border-radius: 15px;
+    width: 350px;
+    margin: auto;
+    margin-top: 80px;
+    box-shadow: 0 0 20px rgba(0,255,150,0.2);
+    color: white;
+}
+
+/* INPUT STYLE */
+input, textarea {
+    border-radius: 10px !important;
+}
+
+/* BUTTON STYLE */
+.stButton>button {
+    width: 100%;
+    border-radius: 8px;
+    background: #00ffd5;
+    color: black;
+    font-weight: bold;
+}
+
+.stButton>button:hover {
+    background: #00c2a8;
+}
