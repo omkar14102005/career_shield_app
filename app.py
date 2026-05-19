@@ -54,21 +54,26 @@ def login_page():
 
     st.markdown("""
     <div class="login-container">
+    st.markdown("""
+<div class="login-container">
 
-        <div class="security-box">
+    <div class="security-box">
 
-            <div class="shield"></div>
+        <div class="shield"></div>
 
-            <div class="security-title">
-                AI Powered<br>
-                Fake Job Detector
-            </div>
-
-            <div class="security-sub">
-                Smart AI Protection For Safe Careers & Trusted Hiring
-            </div>
-
+        <div class="security-title">
+            AI Powered<br>
+            Fake Job Detector
         </div>
+
+        <div class="security-sub">
+            Smart AI Protection For Safe Careers & Trusted Hiring
+        </div>
+
+    </div>
+""", unsafe_allow_html=True)
+
+        
     """, unsafe_allow_html=True)
 
     st.markdown(
