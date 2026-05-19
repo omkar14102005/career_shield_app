@@ -435,3 +435,19 @@ section[data-testid="stSidebar"] {
         transform: translateY(0px);
     }
 }
+/* FIX LOGIN LAYOUT */
+
+.security-box{
+    text-align:center;
+    margin-top:120px;
+}
+
+.form-box{
+    margin-top:120px;
+}
+
+/* REMOVE EXTRA WIDTH */
+.block-container{
+    padding-top:1rem;
+    max-width:100%;
+}
