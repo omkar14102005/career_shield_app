@@ -64,11 +64,10 @@ def login_page():
                 AI Powered<br>
                 Fake Job Detector
             </div>
-
-            <div class="security-sub">
-                Secure AI Analysis • Real-Time Detection • 98% Accuracy
-            </div>
-
+              <div class="security-sub">
+    Smart AI Protection For Safe Careers & Trusted Hiring
+</div>
+            
         </div>
 
         <div class="form-box glass">
