@@ -3,28 +3,29 @@ import pandas as pd
 st.markdown("""
 <style>
 
-/* BLACK ANIMATED BACKGROUND */
+/* FULL BACKGROUND IMAGE */
 .stApp {
-    background: linear-gradient(-45deg, #000000, #111111, #000000, #1a1a1a);
-    background-size: 400% 400%;
-    animation: bgMove 8s ease infinite;
+    background-image: url("https://images.unsplash.com/photo-1557683316-973673baf926");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-/* ANIMATION */
-@keyframes bgMove {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
+/* DARK OVERLAY */
+.stApp::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0,0,0,0.6);
 }
 
-/* REMOVE WHITE SPACE */
+/* LOGIN BOX */
 .block-container {
-    padding-top: 2rem;
-}
-
-/* INPUT BOX STYLE */
-input, textarea {
-    border-radius: 10px !important;
+    position: relative;
+    z-index: 2;
 }
 
 </style>
