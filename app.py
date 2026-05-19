@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
 def load_css():
     with open("style.css") as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -76,6 +78,12 @@ def login():
     password = st.text_input("Password", type="password")
 
     if st.button("Login"):
+        if st.button("Login"):
+    if username == "admin" and password == "1234":
+        st.session_state.logged_in = True
+        st.rerun()
+    else:
+        st.error("Wrong password")
         if username in users and users[username] == password:
             st.session_state.logged_in = True
             st.success("Login Successful 🚀")
