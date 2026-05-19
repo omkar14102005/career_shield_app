@@ -73,9 +73,6 @@ def login_page():
     </div>
 """, unsafe_allow_html=True)
 
-        
-    """, unsafe_allow_html=True)
-
     st.markdown(
         '<div class="form-box glass">',
         unsafe_allow_html=True
