@@ -53,7 +53,6 @@ vectorizer, model, data = load_model()
 def login_page():
 
     st.markdown("""
-
     <div class="login-container">
 
         <div class="security-box">
@@ -64,15 +63,15 @@ def login_page():
                 AI Powered<br>
                 Fake Job Detector
             </div>
-              <div class="security-sub">
-    Smart AI Protection For Safe Careers & Trusted Hiring
-</div>
-            
+
+            <div class="security-sub">
+                Smart AI Protection For Safe Careers & Trusted Hiring
+            </div>
+
         </div>
-
-        <div class="form-box glass">
-
     """, unsafe_allow_html=True)
+
+    st.markdown('<div class="form-box glass">', unsafe_allow_html=True)
 
     st.title("🔐 Secure Login")
 
@@ -88,7 +87,6 @@ def login_page():
         if username == "admin" and password == "1234":
 
             st.session_state.logged_in = True
-
             st.rerun()
 
         else:
@@ -99,6 +97,8 @@ def login_page():
         "</div></div>",
         unsafe_allow_html=True
     )
+
+        
 
 # DASHBOARD
 def dashboard():
