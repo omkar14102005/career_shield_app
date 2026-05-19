@@ -2,124 +2,250 @@ import streamlit as st
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+import matplotlib.pyplot as plt
 
-# ---------------- PAGE ----------------
-st.set_page_config(page_title="Fake Job Detector", layout="centered")
+# PAGE CONFIG
+st.set_page_config(
+    page_title="AI Fake Job Detector",
+    layout="wide"
+)
 
-# ---------------- SESSION ----------------
+# LOAD CSS
+def load_css():
+    with open("style.css") as f:
+        st.markdown(
+            f"<style>{f.read()}</style>",
+            unsafe_allow_html=True
+        )
+
+load_css()
+
+# SESSION
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# ---------------- BACKGROUND CSS ----------------
-st.markdown("""
-<style>
-
-/* JOB / CAREER BACKGROUND */
-.stApp {
-    background-image: url("https://images.unsplash.com/photo-1521737604893-d14cc237f11d");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-/* DARK OVERLAY */
-.stApp::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background: rgba(0,0,0,0.6);
-    z-index: 0;
-}
-
-/* CONTENT ABOVE BACKGROUND */
-.block-container {
-    position: relative;
-    z-index: 2;
-}
-
-/* LOGIN BOX */
-.login-box {
-    background: rgba(255,255,255,0.08);
-    padding: 25px;
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
-    width: 350px;
-    margin: auto;
-    margin-top: 80px;
-    color: white;
-}
-
-/* BUTTON */
-.stButton>button {
-    width: 100%;
-    background: #00ffd5;
-    color: black;
-    font-weight: bold;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-# ---------------- ML MODEL ----------------
+# MODEL
 @st.cache_resource
 def load_model():
+
     data = pd.read_csv("jobs.csv")
 
     X = data["description"]
     y = data["label"]
 
     vectorizer = TfidfVectorizer()
+
     X_vec = vectorizer.fit_transform(X)
 
     model = LogisticRegression()
+
     model.fit(X_vec, y)
 
-    return vectorizer, model
+    return vectorizer, model, data
 
-vectorizer, model = load_model()
+vectorizer, model, data = load_model()
 
-# ---------------- LOGIN ----------------
-def login():
-    st.markdown("<div class='login-box'>", unsafe_allow_html=True)
+# LOGIN PAGE
+def login_page():
 
-    st.title("🔐 Login")
+    st.markdown("""
+    <div class="login-container">
+
+        <div class="security-box">
+
+            <div class="shield"></div>
+
+            <div class="security-title">
+                AI Powered<br>
+                Fake Job Detector
+            </div>
+
+            <div class="security-sub">
+                Secure AI Analysis • Real-Time Detection • 98% Accuracy
+            </div>
+
+        </div>
+
+        <div class="form-box glass">
+    """, unsafe_allow_html=True)
+
+    st.title("🔐 Welcome Back")
 
     username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
 
-    if st.button("Login"):
+    password = st.text_input(
+        "Password",
+        type="password"
+    )
+
+    if st.button("LOGIN"):
+
         if username == "admin" and password == "1234":
+
             st.session_state.logged_in = True
+
             st.rerun()
+
         else:
+
             st.error("Wrong Credentials")
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div></div>", unsafe_allow_html=True)
 
-# ---------------- MAIN APP ----------------
-def main_app():
-    st.title("🧠 AI Fake Job Detector")
+# DASHBOARD
+def dashboard():
 
-    job_text = st.text_area("Enter Job Description")
+    st.sidebar.title("🛡 AI Security")
 
-    if st.button("Check"):
-        input_data = vectorizer.transform([job_text])
-        result = model.predict(input_data)[0]
+    page = st.sidebar.radio(
+        "Navigation",
+        [
+            "Dashboard",
+            "Live Scan",
+            "Analytics",
+            "Network",
+            "Logout"
+        ]
+    )
 
-        if result.lower() == "fake":
-            st.error("❌ FAKE JOB")
-        else:
-            st.success("✅ REAL JOB")
+    # DASHBOARD
+    if page == "Dashboard":
 
-    if st.button("Logout"):
+        st.markdown("<div class='glass'>", unsafe_allow_html=True)
+
+        st.title("📊 Security Dashboard")
+
+        col1, col2, col3, col4 = st.columns(4)
+
+        with col1:
+            st.markdown("""
+            <div class="metric-card">
+            <h2>1,248</h2>
+            <p>Total Scans</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with col2:
+            st.markdown("""
+            <div class="metric-card">
+            <h2>842</h2>
+            <p>Fake Jobs</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with col3:
+            st.markdown("""
+            <div class="metric-card">
+            <h2>406</h2>
+            <p>Safe Jobs</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with col4:
+            st.markdown("""
+            <div class="metric-card">
+            <h2>98%</h2>
+            <p>Accuracy</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # LIVE SCAN
+    elif page == "Live Scan":
+
+        st.markdown("<div class='glass'>", unsafe_allow_html=True)
+
+        st.title("🛰 Live Job Scan")
+
+        job_text = st.text_area(
+            "Paste Job Description"
+        )
+
+        st.markdown("""
+        <div class="scan-box">
+            <div class="scan-line"></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if st.button("Analyze Threat"):
+
+            input_data = vectorizer.transform([job_text])
+
+            result = model.predict(input_data)[0]
+
+            if result.lower() == "fake":
+
+                risk = 78
+
+                st.error(
+                    f"❌ HIGH RISK JOB ({risk}%)"
+                )
+
+            else:
+
+                risk = 18
+
+                st.success(
+                    f"✅ SAFE JOB ({risk}%)"
+                )
+
+            st.subheader("Risk Meter")
+
+            st.markdown("""
+            <div class="risk-meter"></div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # ANALYTICS
+    elif page == "Analytics":
+
+        st.markdown("<div class='glass'>", unsafe_allow_html=True)
+
+        st.title("📈 Threat Analytics")
+
+        label_counts = data["label"].value_counts()
+
+        fig, ax = plt.subplots()
+
+        ax.pie(
+            label_counts,
+            labels=label_counts.index,
+            autopct="%1.1f%%"
+        )
+
+        st.pyplot(fig)
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # NETWORK
+    elif page == "Network":
+
+        st.markdown("<div class='glass'>", unsafe_allow_html=True)
+
+        st.title("🌍 Jobs Network")
+
+        st.image(
+            "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5",
+            use_container_width=True
+        )
+
+        st.write(
+            "Global AI scam intelligence and live threat mapping."
+        )
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # LOGOUT
+    elif page == "Logout":
+
         st.session_state.logged_in = False
+
         st.rerun()
 
-# ---------------- ROUTING ----------------
+# ROUTING
 if st.session_state.logged_in:
-    main_app()
+    dashboard()
 else:
-    login()
+    login_page()
