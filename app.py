@@ -1,28 +1,10 @@
 import streamlit as st
 import pandas as pd
-st.markdown("""
-<style>
+def load_css():
+    with open("style.css") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-.stApp {
-    position: relative;
-}
-
-video {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-}
-
-</style>
-
-<video autoplay loop muted>
-  <source src="https://cdn.pixabay.com/video/2023/02/14/150512-798489918_large.mp4" type="video/mp4">
-</video>
-""", unsafe_allow_html=True)
+load_css()
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 
