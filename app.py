@@ -1,5 +1,34 @@
 import streamlit as st
 import pandas as pd
+st.markdown("""
+<style>
+
+/* BLACK ANIMATED BACKGROUND */
+.stApp {
+    background: linear-gradient(-45deg, #000000, #111111, #000000, #1a1a1a);
+    background-size: 400% 400%;
+    animation: bgMove 8s ease infinite;
+}
+
+/* ANIMATION */
+@keyframes bgMove {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+/* REMOVE WHITE SPACE */
+.block-container {
+    padding-top: 2rem;
+}
+
+/* INPUT BOX STYLE */
+input, textarea {
+    border-radius: 10px !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 
