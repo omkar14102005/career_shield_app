@@ -3,21 +3,24 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 
-# PAGE CONFIG
+# PAGE
 st.set_page_config(
     page_title="AI Fake Job Detector",
     layout="wide"
 )
 
-# LOAD CSS
+# CSS LOAD
 with open("style.css") as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    st.markdown(
+        f"<style>{f.read()}</style>",
+        unsafe_allow_html=True
+    )
 
 # SESSION
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# LOAD DATA
+# DATA
 data = pd.read_csv("jobs.csv")
 
 X = data["description"]
@@ -32,9 +35,11 @@ model.fit(X_vector, y)
 # LOGIN PAGE
 def login_page():
 
-    st.markdown("""
-    <div class="login-container">
+    col1, col2 = st.columns([1.2, 1])
 
+    with col1:
+
+        st.markdown("""
         <div class="security-box">
 
             <div class="shield"></div>
@@ -49,39 +54,39 @@ def login_page():
             </div>
 
         </div>
+        """, unsafe_allow_html=True)
 
-    </div>
-    """, unsafe_allow_html=True)
+    with col2:
 
-    st.markdown(
-        '<div class="form-box glass">',
-        unsafe_allow_html=True
-    )
+        st.markdown(
+            '<div class="form-box glass">',
+            unsafe_allow_html=True
+        )
 
-    st.title("🔐 Secure Login")
+        st.title("🔐 Secure Login")
 
-    username = st.text_input("Username")
+        username = st.text_input("Username")
 
-    password = st.text_input(
-        "Password",
-        type="password"
-    )
+        password = st.text_input(
+            "Password",
+            type="password"
+        )
 
-    if st.button("LOGIN"):
+        if st.button("LOGIN"):
 
-        if username == "admin" and password == "1234":
+            if username == "admin" and password == "1234":
 
-            st.session_state.logged_in = True
-            st.rerun()
+                st.session_state.logged_in = True
+                st.rerun()
 
-        else:
+            else:
 
-            st.error("Wrong Credentials")
+                st.error("Wrong Credentials")
 
-    st.markdown(
-        "</div>",
-        unsafe_allow_html=True
-    )
+        st.markdown(
+            "</div>",
+            unsafe_allow_html=True
+        )
 
 # DASHBOARD
 def dashboard():
@@ -94,12 +99,14 @@ def dashboard():
 
     st.markdown("""
     <div class="scan-box">
-        LIVE AI JOB SCAN ACTIVE
+        <div class="scan-line"></div>
     </div>
     """, unsafe_allow_html=True)
 
+    st.subheader("📄 Analyze Job Description")
+
     job_text = st.text_area(
-        "Enter Job Description"
+        "Paste Job Description Here"
     )
 
     if st.button("CHECK JOB"):
@@ -110,18 +117,17 @@ def dashboard():
 
         if result.lower() == "fake":
 
-            st.error(
-                "⚠ Fake Job Detected"
-            )
+            st.error("⚠ Fake Job Detected")
 
         else:
 
-            st.success(
-                "✅ Real Job Detected"
-            )
+            st.success("✅ Real Job Detected")
 
 # MAIN
 if st.session_state.logged_in:
+
     dashboard()
+
 else:
+
     login_page()
