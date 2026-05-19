@@ -3,32 +3,25 @@ import pandas as pd
 st.markdown("""
 <style>
 
-/* FULL BACKGROUND IMAGE */
 .stApp {
-    background-image: url("https://images.unsplash.com/photo-1557683316-973673baf926");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    position: relative;
 }
 
-/* DARK OVERLAY */
-.stApp::before {
-    content: "";
-    position: absolute;
+video {
+    position: fixed;
     top: 0;
     left: 0;
-    height: 100%;
     width: 100%;
-    background: rgba(0,0,0,0.6);
-}
-
-/* LOGIN BOX */
-.block-container {
-    position: relative;
-    z-index: 2;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
 }
 
 </style>
+
+<video autoplay loop muted>
+  <source src="https://cdn.pixabay.com/video/2023/02/14/150512-798489918_large.mp4" type="video/mp4">
+</video>
 """, unsafe_allow_html=True)
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
