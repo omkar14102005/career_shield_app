@@ -152,7 +152,7 @@ def login_page():
         st.title("🔐 Secure Infrastructure Gateway")
         username = st.text_input("Security Token Identity ID")
         password = st.text_input("Access Passphrase Code", type="password")
-        if st.button("AUTHENTICATE SYSTEM LOGIN", use_container_width=True):
+        if st.button("SYSTEM LOGIN", use_container_width=True):
             if username == "admin" and password == "1234":
                 st.session_state.logged_in = True
                 st.rerun()
@@ -232,7 +232,7 @@ def dashboard():
             with c2:
                 url_input = st.text_input("Associated URL Anchor Gateway", placeholder="http://highrisk-shortener.xyz/apply")
                 
-            submit_scan = st.form_submit_button("DEPLOY SCANNER VECTOR CORE", use_container_width=True)
+            submit_scan = st.form_submit_button("ANALYZE JOB THREAT", use_container_width=True)
 
         if submit_scan and job_desc:
             with st.spinner("Processing vectors through NLP Pipeline & Rule Aggregators..."):
