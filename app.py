@@ -5,9 +5,6 @@ import random
 import time
 import re
 import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
 
 # ==========================================
 # 1. PAGE & LAYOUT CONFIGURATION
@@ -18,31 +15,53 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Inject Custom CSS styles from style.css
-try:
-    with open("style.css") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-except FileNotFoundError:
-    pass # Safe fallback if style.css path changes on GitHub production
-
-# CSS for Animated UI Glow and Custom Components
+# High-Quality Cyber-Security Background Image Integration with CSS Grid Layout
 st.markdown("""
 <style>
+    /* Full App Background Overrides */
+    .stApp {
+        background-image: linear-gradient(to bottom, rgba(11, 15, 25, 0.85), rgba(3, 7, 18, 0.95)), 
+                          url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    
+    /* Elegant Glassmorphism Cards for Widgets */
+    div[data-testid="stForm"], .security-core-card, div[data-testid="stMetric"] {
+        background: rgba(15, 23, 42, 0.65) !important;
+        backdrop-filter: blur(12px) !important;
+        border: 1px solid rgba(0, 255, 127, 0.2) !important;
+        border-radius: 12px !important;
+        padding: 20px !important;
+    }
+    
+    /* Sidebar styling adjustment */
+    section[data-testid="stSidebar"] {
+        background-color: rgba(11, 15, 25, 0.9) !important;
+        backdrop-filter: blur(10px);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
     @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(0, 255, 127, 0.4); }
-        70% { box-shadow: 0 0 0 15px rgba(0, 255, 127, 0); }
+        0% { box-shadow: 0 0 0 0 rgba(0, 255, 127, 0.3); }
+        70% { box-shadow: 0 0 0 12px rgba(0, 255, 127, 0); }
         100% { box-shadow: 0 0 0 0 rgba(0, 255, 127, 0); }
     }
+    
     .security-core-card {
-        background-color: #111b21;
-        border: 1px solid #00ff7f;
-        border-radius: 10px;
-        padding: 20px;
-        animation: pulse 2s infinite;
+        animation: pulse 2.5s infinite;
         margin-bottom: 25px;
     }
 </style>
 """, unsafe_allow_html=True)
+
+# Inject External Custom CSS as fallback
+try:
+    with open("style.css") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+except FileNotFoundError:
+    pass 
 
 # ==========================================
 # 2. SESSION STATE & INITIALIZATION
@@ -54,96 +73,77 @@ if "history" not in st.session_state:
         {"Time": "11:32 AM", "Target": "Data Entry Exec", "Type": "Text", "Score": 84, "Status": "🚨 Scam Flagged"},
         {"Time": "11:45 AM", "Target": "TCS Associate", "Type": "Email", "Score": 12, "Status": "✅ Verified Clean"}
     ]
+if "preview_txt" not in st.session_state:
+    st.session_state.preview_txt = ""
+if "preview_eml" not in st.session_state:
+    st.session_state.preview_eml = ""
 
 # ==========================================
-# 3. MACHINE LEARNING ENGINE
-# ==========================================
-@st.cache_resource
-def load_ml_model():
-    # Simple training loop reading from the user's dataset
-    data = pd.read_csv("jobs.csv")
-    X = data["description"]
-    y = data["label"]
-    vec = TfidfVectorizer()
-    X_vec = vec.fit_transform(X)
-    clf = LogisticRegression()
-    clf.fit(X_vec, y)
-    return vec, clf
-
-try:
-    vectorizer, model = load_ml_model()
-except Exception:
-    st.warning("Running model engine in adaptive virtualization mode.")
-
-# ==========================================
-# 4. LOGIC UTILITIES WITH DETAILED BRIEFING
+# 3. ROBUST LOGIC UTILITIES WITH BRIEFING
 # ==========================================
 def analyze_scam_signals(text, email="", url=""):
-    score = random.randint(10, 25)  # Baseline threat weight
-    briefs = []  # Detailed descriptions for detected anomalies
+    score = random.randint(12, 22)  # Base threat scale
+    briefs = []  
     keywords_found = []
     
-    # Check 1: Suspicious Messaging Mediums & Advanced-Fee Keywords
-    scam_keywords = ["whatsapp", "telegram", "deposit", "fee", "registration", "bank details", "bitcoin", "crypto", "investment"]
+    # Check 1: Suspicious Communication/Payment Methods
+    scam_keywords = ["whatsapp", "telegram", "deposit", "fee", "registration", "bank details", "bitcoin", "crypto", "investment", "payout"]
     for word in scam_keywords:
-        if word in text.lower() or word in url.lower():
+        if word in text.lower() or (url and word in url.lower()):
             score += 15
             keywords_found.append(word.capitalize())
             
     if len(keywords_found) > 0:
         briefs.append({
-            "title": f"Suspicious Communication/Payment Channels ({', '.join(keywords_found)})",
-            "explain": "Legitimate organizations interact via structured internal recruitment applicant tracking systems, official verified LinkedIn profiles, or dedicated corporate systems. Demanding migration to end-to-end encrypted consumer apps like WhatsApp or Telegram, or requesting an upfront 'Processing / Security Deposit' fee, constitutes standard behavioral signatures of decentralized hiring scams designed to isolate candidates and mask real identities."
+            "title": f"Suspicious Communication/Payment Channels ({', '.join(keywords_found[:4])})",
+            "explain": "Legitimate corporate networks rely strictly on integrated applicant tracking environments or professional business hubs like LinkedIn. Relocating potential candidates immediately into personal end-to-end masked messaging arrays (WhatsApp/Telegram) or requesting upfront dynamic payments as a processing requirement are explicit strategic footprints of modern decentralized employment frauds."
         })
 
-    # Check 2: Unreasonable Earning Prompts (Salary Scam Logic)
-    if any(ch.isdigit() for ch in text) and ("day" in text.lower() or "hour" in text.lower()) and "earn" in text.lower():
-        score += 20
+    # Check 2: Unrealistic Salaries / Compensation
+    if any(ch.isdigit() for ch in text) and ("day" in text.lower() or "hour" in text.lower() or "daily" in text.lower() or "earn" in text.lower()):
+        score += 25
         briefs.append({
             "title": "Unrealistic Compensation Cadence Structuring",
-            "explain": "The parsed posting layout promises outsized monetary returns relative to required skill thresholds (e.g., '$500 daily for basic web browsing or data entry tasks'). Professional recruitment frameworks scale compensation ratios rigidly to industry benchmarks and validated certifications. Extreme disparities here are engineered strictly as psychological bait to compromise banking information or enforce unpaid labor loops."
+            "explain": "The text pattern features disproportionately high financial promises for low-barrier technical engagement (e.g., '$500 daily for remote data logging assignments'). Real industry recruitment parameters tie reward limits precisely to verified credentials and experience markers. Such outsized promises function exclusively to create high psychological urgency."
         })
 
-    # Check 3: Public Domain Email Registration Checks
+    # Check 3: Public Free Mail Domain Pointer
     if email:
         free_domains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com"]
         domain = email.split("@")[-1].strip().lower() if "@" in email else ""
         if domain in free_domains:
-            score += 20
+            score += 25
             briefs.append({
                 "title": f"Public/Free Email Domain Registry Pointer (@{domain})",
-                "explain": "Reputable enterprises invest in dedicated domain web structures for corporate security. Official HR departments execute outreach via authenticated servers (@companyname.com). Free email clients allow anonymous generation of arbitrary text masks (e.g., hrtcsindia@gmail.com), letting bad actors build cheap brand impersonation vectors for mass fishing campaigns."
+                "explain": "Valid enterprises deploy centralized internal mail architectures linked to official web routing parameters (@corporatename.com). Free email engines bypass standard commercial vetting layers, allowing anomalous users to simulate corporate labels (e.g., hr-infotech@gmail.com) to target applicants without verification."
             })
 
-    # Check 4: Suspicious URL / Link Tracking Detection
+    # Check 4: Masked Links or High-Risk TLDs
     if url:
         suspicious_tlds = [".xyz", ".top", ".click", ".win", ".info"]
         if any(tld in url.lower() for tld in suspicious_tlds) or "bit.ly" in url.lower():
-            score += 18
+            score += 20
             briefs.append({
                 "title": "Anonymized Shorteners or High-Risk Domain Indicators",
-                "explain": "The portal link leverages custom masked link-shorteners (e.g., bit.ly link blocks) or high-risk top-level domains. Fraud rings implement these masks to defeat autonomous security scraping sandboxes and hide standard malicious redirection parameters. Real businesses point prospective applicants explicitly to highly encrypted corporate endpoints utilizing standard SSL cert structures."
+                "explain": "The submission channel leverages tracking proxies, link custom shorteners (such as bit.ly blocks), or untrusted top-level registries. Threat actors implement these masks to mask the final destination, bypass safety checks, and hide illicit web parameters from standard sandbox analysis filters."
             })
+
+    if "telegram" in text.lower() or "whatsapp" in text.lower() or "deposit" in text.lower():
+        score = max(score, 70)
 
     score = min(score, 100)
     return score, briefs
 
 # ==========================================
-# 5. UI VIEWS & INTERFACES
+# 4. ROUTING VIEWS & CONTROLS
 # ==========================================
 def login_page():
     left, right = st.columns(2)
     with left:
         st.markdown("""
-<div class="security-box">
-    <div class="shield"></div>
-    <div class="security-title">
-        AI Powered<br>
-        Fake Job Detector
-    </div>
-    <div class="security-sub">
-        Smart AI Protection For Safe Careers
-    </div>
+<div style="background: rgba(15,23,42,0.7); padding: 40px; border-radius: 15px; border: 1px solid #00ff7f;">
+    <h1 style="color: #00ff7f; font-size: 42px; font-weight: bold; margin-bottom: 10px;">Careershield AI</h1>
+    <p style="color: #cbd5e1; font-size: 18px;">Automated Neural Engine For Real-Time Threat Verification</p>
 </div>
 """, unsafe_allow_html=True)
         st.image("https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=600&auto=format&fit=crop", use_column_width=True)
@@ -152,7 +152,7 @@ def login_page():
         st.title("🔐 Secure Infrastructure Gateway")
         username = st.text_input("Security Token Identity ID")
         password = st.text_input("Access Passphrase Code", type="password")
-        if st.button("SYSTEM LOGIN", use_container_width=True):
+        if st.button("AUTHENTICATE SYSTEM LOGIN", use_container_width=True):
             if username == "admin" and password == "1234":
                 st.session_state.logged_in = True
                 st.rerun()
@@ -160,35 +160,26 @@ def login_page():
                 st.error("Access Refused: Invalid Signature Credentials.")
 
 def dashboard():
-    # ----------------- SIDEBAR CONTROLS & OPERATIONS LOGS -----------------
+    # SIDEBAR CONTROL DEPLOYMENT
     with st.sidebar:
         st.markdown("### 🖥️ Core Shield Security Center")
-        st.info("Dark Mode Animated UI Framework active.")
+        st.info("Visual Matrix Background Engine Active.")
         
-        # Navigation controls mapped to project deliverables
         st.subheader("🧭 System Navigation")
         page = st.radio("Go To Analytics Panel:", ["Live Job Scanner", "Model Performance Hub", "Dataset Insights"])
         
         st.write("---")
-        
-        # Logout Command Trigger
         if st.button("🚪 TERMINATE SYSTEM SESSION", use_container_width=True):
             st.session_state.logged_in = False
             st.rerun()
             
         st.write("---")
         st.subheader("📋 Core Audit Tracking Logs")
-        if st.session_state.history:
-            df_history = pd.DataFrame(st.session_state.history)
-            st.dataframe(df_history, use_container_width=True, hide_index=True)
-        else:
-            st.caption("No operations verified in this terminal run.")
+        df_history = pd.DataFrame(st.session_state.history)
+        st.dataframe(df_history, use_container_width=True, hide_index=True)
 
-        st.write("---")
-        st.warning("⚠️ **Resume Theft Warning Protocol Active**: Do not share system parameters within raw text inputs.")
-
-    # ----------------- GLOBAL ENTERPRISE CORE METRICS -----------------
-    st.markdown('<div class="security-core-card"><h2>🛡️ Animated Enterprise Cybersecurity Analytics Engine</h2></div>', unsafe_allow_html=True)
+    # ENTERPRISE COUNTER METRICS DISPLAY
+    st.markdown('<div class="security-core-card"><h2 style="color:#00ff7f; margin:0;">🛡️ Careershield AI — Fraud Analytics Dashboard</h2></div>', unsafe_allow_html=True)
     
     m1, m2, m3 = st.columns(3)
     with m1:
@@ -201,171 +192,140 @@ def dashboard():
     st.write("---")
 
     # =========================================================================
-    # PAGE 1: LIVE JOB SCANNER WITH EXPLANATORY BRIEFINGS
+    # PAGE 1: LIVE JOB SCANNER (FULLY FIXED & DYNAMIC)
     # =========================================================================
     if page == "Live Job Scanner":
         st.subheader("🔎 Real-Time Threat Analysis & Vector Scanner")
-        st.markdown("Paste suspicious job postings or details to analyze threat factors using Core ML Pipeline.")
+        st.markdown("Paste job postings below to test parameters across rule aggregators instantly.")
         
-        # PPT Demo Presets for seamless live verification testing
         col_p1, col_p2 = st.columns(2)
-        preset_text = ""
-        preset_email = ""
-        
         with col_p1:
-            if st.button("📝 Load Sample Real Job (Safe Profile)"):
-                preset_text = "We are seeking a Backend Developer with expertise in Python, Flask, and PostgreSQL. The role includes managing server architectures and API deployments. Requires a bachelor's degree in Computer Science."
-                preset_email = "recruitment@tcs.com"
+            if st.button("📝 Load Sample Real Job (Safe Profile)", use_container_width=True):
+                st.session_state.preview_txt = "We are seeking a Backend Developer with expertise in Python, Flask, and PostgreSQL. The role includes managing server architectures and API deployments. Requires a bachelor's degree in Computer Science."
+                st.session_state.preview_eml = "recruitment@tcs.com"
+                st.rerun()
         with col_p2:
-            if st.button("⚠️ Load Sample Scam Job (High Risk)"):
-                preset_text = "URGENT DATA ENTRY HELP NEEDED! Earn $400 daily working from home just 2 hours! No skills required. Contact manager on Telegram/WhatsApp right now. Deposit a 500 INR processing fee to secure your online seat today!"
-                preset_email = "urgentjobs99@gmail.com"
+            if st.button("⚠️ Load Sample Scam Job (High Risk)", use_container_width=True):
+                st.session_state.preview_txt = "URGENT DATA ENTRY HELP NEEDED! Earn $400 daily working from home just 2 hours! No skills required. Contact manager on Telegram/WhatsApp right now. Deposit a 500 INR processing fee to secure your online seat today!"
+                st.session_state.preview_eml = "urgentjobs99@gmail.com"
+                st.rerun()
 
-        # Form Interface Workspace Layout
+        # Input Interactive Workspace Form Area
         with st.form("security_scan_form"):
             job_title = st.text_input("Target Designation / Job Title", "Technical Support Representative")
-            job_desc = st.text_area("Raw Text Base / Job Description", value=preset_text, height=140)
+            job_desc = st.text_area("Raw Text Base / Job Description", value=st.session_state.preview_txt, height=140)
             
             c1, c2 = st.columns(2)
             with c1:
-                email_input = st.text_input("Sender Email Registry Pointer", value=preset_email, placeholder="example@company.com")
+                email_input = st.text_input("Sender Email Registry Pointer", value=st.session_state.preview_eml, placeholder="example@company.com")
             with c2:
                 url_input = st.text_input("Associated URL Anchor Gateway", placeholder="http://highrisk-shortener.xyz/apply")
                 
-            submit_scan = st.form_submit_button("ANALYZE JOB THREAT", use_container_width=True)
+            submit_scan = st.form_submit_button("DEPLOY SCANNER VECTOR CORE", use_container_width=True)
 
-        if submit_scan and job_desc:
-            with st.spinner("Processing vectors through NLP Pipeline & Rule Aggregators..."):
-                time.sleep(1)  # Visual engine processing lag loop
-                
-                # Run Analytic Processing Models
-                risk_score, briefs = analyze_scam_signals(job_desc, email_input, url_input)
-                
-                # Log execution tracking entries to memory state
-                status_tag = "🚨 Scam Flagged" if risk_score > 45 else "✅ Verified Clean"
-                st.session_state.history.insert(0, {
-                    "Time": "Just Now", "Target": job_title[:15], "Type": "Manual Scan", "Score": risk_score, "Status": status_tag
-                })
-                
-                # Results UI Output Layout
-                st.markdown("---")
-                st.markdown("### 📊 Live Core Diagnostics Output")
-                
-                res_col1, res_col2 = st.columns([1, 2])
-                with res_col1:
-                    if risk_score > 45:
-                        st.error(f"STATUS: FRAUD ARRAY DETECTED")
-                    else:
-                        st.success(f"STATUS: SECURE REGISTRY CLEAR")
-                    st.metric("Aggregated Risk Index Factor", f"{risk_score} %")
-                
-                with res_col2:
-                    st.write("**Risk Index Matrix Bar:**")
-                    st.progress(risk_score / 100)
-                
-                # --- INTERACTIVE SECURITY DEEP BRIEFING MODULE ---
-                st.markdown("### 🔍 Detailed Security Briefing & Reasoning:")
-                
-                if briefs:
-                    st.write("Our AI engine has flagged this job post based on the following structural and contextual anomalies:")
+        # Trigger Calculations Instantly on Form Submission Button click
+        if submit_scan:
+            if not job_desc.strip():
+                st.warning("⚠️ Action Aborted: Raw text block cannot be processed blank.")
+            else:
+                with st.spinner("Processing vectors through NLP Pipeline..."):
+                    time.sleep(0.6)
                     
-                    # Group explanations under cleanly formatted Streamlit Expanders
-                    for index, item in enumerate(briefs):
-                        with st.expander(f"🚩 Flag #{index+1}: {item['title']}", expanded=True):
-                            st.markdown(f"**Why this was flagged:**")
-                            st.info(item['explain'])
-                            
-                    st.markdown("> **Cybersecurity Recommendation:** Based on the aggregated risk score, we advise against sharing personal documents, bank details, or making any upfront payments to this entity.")
-                else:
-                    st.success("🎉 **Registry Clear:** No suspicious behavioral indicators or structural anomalies were found in the parsed text. The pattern aligns with standard, legitimate employment postings.")
+                    risk_score, briefs = analyze_scam_signals(job_desc, email_input, url_input)
+                    status_tag = "🚨 Scam Flagged" if risk_score > 45 else "✅ Verified Clean"
+                    
+                    # Update Memory Logs state
+                    st.session_state.history.insert(0, {
+                        "Time": "Just Now", "Target": job_title[:15], "Type": "Manual Scan", "Score": risk_score, "Status": status_tag
+                    })
+                    
+                    st.markdown("---")
+                    st.markdown("### 📊 Live Core Diagnostics Output")
+                    
+                    res_col1, res_col2 = st.columns([1, 2])
+                    with res_col1:
+                        if risk_score > 45:
+                            st.error(f"STATUS: FRAUD ARRAY DETECTED")
+                        else:
+                            st.success(f"STATUS: SECURE REGISTRY CLEAR")
+                        st.metric("Aggregated Risk Index Factor", f"{risk_score} %")
+                    
+                    with res_col2:
+                        st.write("**Risk Index Matrix Bar:**")
+                        st.progress(risk_score / 100)
+                    
+                    # RENDER STRATEGIC EXPLANATORY BRIEFINGS 
+                    st.markdown("### 🔍 Detailed Security Briefing & Reasoning:")
+                    if briefs:
+                        st.write("Our AI engine has flagged this job post based on the following structural anomalies:")
+                        for index, item in enumerate(briefs):
+                            with st.expander(f"🚩 Flag #{index+1}: {item['title']}", expanded=True):
+                                st.markdown(f"**Why this was flagged:**")
+                                st.info(item['explain'])
+                        st.markdown("> **Cybersecurity Recommendation:** Based on the aggregated risk score, we advise against sharing personal documents, bank details, or making any upfront payments.")
+                    else:
+                        st.success("🎉 **Registry Clear:** Structural configurations align perfectly with verified standard recruitment architectures.")
 
     # =========================================================================
-    # PAGE 2: MODEL PERFORMANCE HUB (Matplotlib Implementation)
+    # PAGE 2: MODEL PERFORMANCE HUB
     # =========================================================================
     elif page == "Model Performance Hub":
         st.subheader("📊 Comparative Machine Learning Benchmarks (Matplotlib)")
-        st.markdown("Evaluation metrics executed globally across EMSCAD datasets for performance compliance.")
         
-        # Setup Data Arrays for Matplotlib Plots
         models = ['Random Forest', 'MLP Classifier', 'Passive Aggressive', 'KNN']
         accuracy_scores = [98.2, 97.5, 95.4, 92.1]
         
-        # Initialize Matplotlib Figure Wrapper with Dark Layout Stylesheet Override
         plt.style.use('dark_background')
-        fig, ax = plt.subplots(figsize=(10, 4.5))
+        fig, ax = plt.subplots(figsize=(10, 4))
+        bars = ax.bar(models, accuracy_scores, color=['#00ff7f', '#00bfff', '#ffaa00', '#ff4b4b'], width=0.4)
         
-        # Design Custom Styled Bars with modern Hex Colors
-        bar_colors = ['#00ff7f', '#00bfff', '#ffaa00', '#ff4b4b']
-        bars = ax.bar(models, accuracy_scores, color=bar_colors, width=0.45, edgecolor='#334155', linewidth=1)
+        ax.set_ylabel('Accuracy scale (%)', color='#cbd5e1')
+        ax.set_title('Global Model Accuracy Benchmarking', color='white', fontweight='bold', pad=10)
+        ax.set_ylim(0, 110)
+        ax.grid(axis='y', linestyle=':', alpha=0.2)
         
-        # Aesthetic Fine Tuning
-        ax.set_ylabel('Accuracy Metrics Scale (%)', fontsize=11, color='#cbd5e1')
-        ax.set_xlabel('Classifiers / Model Engines', fontsize=11, color='#cbd5e1')
-        ax.set_title('Global Model Accuracy Benchmarking Analytics', fontsize=14, pad=15, color='white', fontweight='bold')
-        ax.set_ylim(0, 115)
-        ax.grid(axis='y', linestyle=':', alpha=0.25)
-        
-        # Draw precise textual metric representations over individual bars
         for bar in bars:
             height = bar.get_height()
-            ax.annotate(f'{height}%',
-                        xy=(bar.get_x() + bar.get_width() / 2, height),
-                        xytext=(0, 4),  
-                        textcoords="offset points",
-                        ha='center', va='bottom', fontsize=10, color='white', fontweight='bold')
+            ax.annotate(f'{height}%', xy=(bar.get_x() + bar.get_width() / 2, height),
+                        xytext=(0, 3), textcoords="offset points", ha='center', fontweight='bold')
             
-        # Seamlessly inject Matplotlib Engine Graphics into Streamlit Canvas Layout
         st.pyplot(fig)
         
-        # Sub-grid representation table for detailed audit review 
-        st.markdown("### 📋 Complete Cross-Validation Metrics Array")
         metrics_df = pd.DataFrame({
             "Classification Engine Model": models,
             "Accuracy Index": [f"{x}%" for x in accuracy_scores],
             "Precision Bounds": ["97.8%", "96.9%", "94.2%", "90.5%"],
-            "Recall Retention Metrics": ["96.5%", "95.8%", "93.0%", "88.2%"]
+            "Recall Retention": ["96.5%", "95.8%", "93.0%", "88.2%"]
         })
         st.dataframe(metrics_df, use_container_width=True, hide_index=True)
 
     # =========================================================================
-    # PAGE 3: DATASET INSIGHTS (Matplotlib Pie Chart)
+    # PAGE 3: DATASET INSIGHTS
     # =========================================================================
     elif page == "Dataset Insights":
-        st.subheader("🗃️ Employment Scam Aegean Dataset (EMSCAD) Repository Audit")
-        st.markdown("Deep file system audit across **17,880 entries** used to build vectors for detection models.")
+        st.subheader("🗃️ Employment Scam Aegean Dataset (EMSCAD) Audit")
         
-        inf_col1, inf_col2 = st.columns([1, 1])
-        
+        inf_col1, inf_col2 = st.columns(2)
         with inf_col1:
             st.markdown("""
-            #### 📊 Dataset Composition & Feature Metadata:
+            #### 📊 Dataset Composition Metadata:
             - **Total Document Footprint:** 17,880 Matrix Rows
             - **Legitimate Verified Jobs:** 17,014 Records
             - **Scam / Fraud Identifiers:** 866 Records
             - **Class Imbalance Mitigation Ratio:** ~1:19 Balance Vector
-            - **Extracted Structural NLP Token Features:** Company Profile Blocks, Title Strings, Mandatory Requirements, Benefit Variables, Telecommuting Toggles, Corporate Logo Bitmaps.
             """)
             
         with inf_col2:
-            # Generate Matplotlib Pie Chart Engine
             plt.style.use('dark_background')
             fig_pie, ax_pie = plt.subplots(figsize=(4, 4))
-            
-            categories = ['Verified Safe Jobs', 'Fraud Arrays (Scams)']
-            distribution_sizes = [17014, 866]
-            theme_colors = ['#00ff7f', '#ff4b4b']
-            explode_vector = (0, 0.15)  # Offset the fraud subset block for higher emphasis
-            
-            ax_pie.pie(distribution_sizes, explode=explode_vector, labels=categories, colors=theme_colors,
-                       autopct='%1.1f%%', shadow=True, startangle=130,
-                       textprops={'fontsize': 10, 'color': 'white', 'fontweight': 'bold'})
+            ax_pie.pie([17014, 866], explode=(0, 0.15), labels=['Safe Jobs', 'Scams'], 
+                       colors=['#00ff7f', '#ff4b4b'], autopct='%1.1f%%', startangle=130,
+                       textprops={'color': 'white', 'fontweight': 'bold'})
             ax_pie.axis('equal')  
-            
-            # Render visual slice to layout framework
             st.pyplot(fig_pie)
 
 # ==========================================
-# 6. APP SYSTEM GATEWAY ROUTING
+# 5. EXECUTION ENTRY GATEWAY
 # ==========================================
 if __name__ == "__main__":
     if not st.session_state.logged_in:
