@@ -31,25 +31,21 @@ def login_page():
     left, right = st.columns(2)
 
     with left:
-
+# Keep this multi-line string flushed to the left edge to prevent Streamlit from reading it as code text
         st.markdown("""
-        <div class="security-box">
-            <div class="shield"></div>
-
-            <div class="security-title">
-                AI Powered<br>
-                Fake Job Detector
-            </div>
-
-            <div class="security-sub">
-                Smart AI Protection For Safe Careers
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+<div class="security-box">
+    <div class="shield"></div>
+    <div class="security-title">
+        AI Powered<br>
+        Fake Job Detector
+    </div>
+    <div class="security-sub">
+        Smart AI Protection For Safe Careers
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
     with right:
-
-        st.markdown('<div class="form-box">', unsafe_allow_html=True)
 
         st.title("🔐 Login")
 
@@ -70,8 +66,6 @@ def login_page():
             else:
 
                 st.error("Wrong Credentials")
-
-        st.markdown("</div>", unsafe_allow_html=True)
 
 # DASHBOARD
 def dashboard():
