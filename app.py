@@ -18,7 +18,6 @@ st.set_page_config(
 )
 
 # Static Cybercrime Theme Background (High Stability)
-# Yeh link specifically cyber-security network ka hai
 CYBER_BG = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1920&auto=format&fit=crop"
 
 st.markdown(f"""
@@ -48,11 +47,22 @@ st.markdown(f"""
         border-right: 2px solid rgba(0, 255, 127, 0.3) !important;
     }}
 
-    /* Neon Red Flags styling */
+    /* Neon Red/Yellow Tags styling */
     .reason-tag {{
         background: rgba(239, 68, 68, 0.1);
         color: #ff4b4b;
         border: 1px solid #ff4b4b;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-weight: bold;
+        display: inline-block;
+        margin: 5px;
+        font-size: 14px;
+    }}
+    .tip-tag {{
+        background: rgba(250, 204, 21, 0.1);
+        color: #facc15;
+        border: 1px solid #facc15;
         padding: 5px 12px;
         border-radius: 8px;
         font-weight: bold;
@@ -68,7 +78,6 @@ st.markdown(f"""
 # ==========================================
 @st.cache_resource
 def load_trained_ai():
-    # Training with structural fraud samples
     scams = ["urgent hiring telegram whatsapp fee registration deposit money daily earn payout bitcoin",
              "data entry work from home fee processing deposit secure seat weekly income",
              "transfer money for laptop processing fee earn cash online without skills"]
@@ -90,7 +99,6 @@ vectorizer, ml_core = load_trained_ai()
 def predict_threat(text, email="", url=""):
     if not text.strip(): return 0, []
     
-    # Real ML Probability
     v = vectorizer.transform([text])
     ml_score = ml_core.predict_proba(v)[0][1] * 100
     
@@ -98,7 +106,6 @@ def predict_threat(text, email="", url=""):
     h_weight = 0
     t_lower = text.lower()
     
-    # Heuristic Rule Checks (Manual Briefing)
     if "telegram" in t_lower or "whatsapp" in t_lower:
         h_weight += 20; reasons.append("Suspicious Chat Redirect (Telegram/WhatsApp)")
     if "fee" in t_lower or "deposit" in t_lower or "registration" in t_lower:
@@ -114,14 +121,61 @@ def predict_threat(text, email="", url=""):
     return final_score, reasons
 
 # ==========================================
-# 3. GAUGE CHART & ANALYTICS
+# 3. NEW FEATURE: SMART RESUME CHECKER ENGINE
 # ==========================================
-def show_risk_gauge(score):
+def analyze_resume(text):
+    errors = []
+    privacy_alerts = []
+    score = 100
+    t_lower = text.lower()
+    
+    # 1. Check Missing Crucial Technical Headers
+    if "github" not in t_lower and "linkedin" not in t_lower:
+        errors.append("Missing Professional Network Links (GitHub / LinkedIn)")
+        score -= 15
+    if "skills" not in t_lower and "technologies" not in t_lower:
+        errors.append("No Structured Skills Matrix Block Found")
+        score -= 20
+    if "project" not in t_lower:
+        errors.append("Missing Core Technical Projects Portfolio")
+        score -= 15
+        
+    # 2. Check Data Privacy Leaks (Cyber Security Perspective)
+    if "aadhar" in t_lower or "aadhaar" in t_lower:
+        privacy_alerts.append("Privacy Risk: Aadhaar Number exposure detected!")
+        score -= 10
+    if "passport" in t_lower:
+        privacy_alerts.append("Privacy Risk: Passport Data signature found.")
+        score -= 10
+    if "dob" in t_lower or "date of birth" in t_lower:
+        privacy_alerts.append("Privacy Risk: Full DOB disclosed (increases identity theft risk).")
+        score -= 5
+
+    # 3. Check Unprofessional Email Patterns
+    email_match = re.search(r'[\w\.-]+@[\w\.-]+', t_lower)
+    if email_match:
+        email = email_match.group(0)
+        if any(bad in email for bad in ["cool", "smart", "rock", "king", "boy", "girl"]):
+            errors.append(f"Unprofessional Email Pattern Detected: '{email}'")
+            score -= 10
+
+    final_score = max(score, 20)
+    return final_score, errors, privacy_alerts
+
+# ==========================================
+# 4. GAUGE CHART & ANALYTICS
+# ==========================================
+def show_risk_gauge(score, label_text="RISK LEVEL"):
     plt.style.use('dark_background')
     fig, ax = plt.subplots(figsize=(4, 2), subplot_kw={'projection': 'polar'})
     angle = np.deg2rad(180 - (score * 1.8))
     ax.barh(0.5, np.pi, left=0, height=0.2, color='#1e293b', align='center')
     g_color = '#00ff7f' if score < 40 else '#ffaa00' if score < 75 else '#ff4b4b'
+    
+    # For resume checker, higher score is good (Green), lower is bad
+    if "SCORE" in label_text:
+        g_color = '#ff4b4b' if score < 50 else '#ffaa00' if score < 80 else '#00ff7f'
+        
     ax.barh(0.5, np.pi - angle, left=angle, height=0.2, color=g_color, align='center')
     ax.annotate('', xy=(angle, 0.65), xytext=(0, 0), arrowprops=dict(arrowstyle="->", color='white', lw=3))
     ax.set_yticklabels([]); ax.set_xticklabels([]); ax.grid(False); ax.spines['polar'].set_visible(False)
@@ -129,14 +183,14 @@ def show_risk_gauge(score):
     st.pyplot(fig)
 
 # ==========================================
-# 4. SESSION HANDLING
+# 5. SESSION HANDLING
 # ==========================================
 if "logged_in" not in st.session_state: st.session_state.logged_in = False
 if "history" not in st.session_state: st.session_state.history = []
 if "preview_txt" not in st.session_state: st.session_state.preview_txt = ""
 
 # ==========================================
-# 5. UI VIEWS
+# 6. UI VIEWS
 # ==========================================
 def login_page():
     st.markdown("<br><br><br>", unsafe_allow_html=True)
@@ -156,7 +210,7 @@ def dashboard():
     # SIDEBAR
     with st.sidebar:
         st.markdown("<h2 style='color:#00ff7f;'>SHIELD MENU</h2>", unsafe_allow_html=True)
-        page = st.radio("Navigate Core:", ["Live Job Scanner", "Bulk Scan (CSV)", "Threat Insights"])
+        page = st.radio("Navigate Core:", ["Live Job Scanner", "AI Resume Checker 🆕", "Bulk Scan (CSV)", "Threat Insights"])
         if st.button("LOGOUT"):
             st.session_state.logged_in = False; st.rerun()
         st.write("---")
@@ -175,11 +229,10 @@ def dashboard():
 
     st.write("---")
 
-    # SCANNER PAGE
+    # MODULE 1: LIVE JOB SCANNER
     if page == "Live Job Scanner":
         st.subheader("🔎 Real-Time Threat Intelligence Scanner")
         
-        # Presets
         c_a, c_b = st.columns(2)
         if c_a.button("📝 Sample Safe Job"): 
             st.session_state.preview_txt = "Senior Software Engineer needed for TCS. Requirements: Python, Django, AWS."
@@ -188,9 +241,8 @@ def dashboard():
             st.session_state.preview_txt = "URGENT WORK! Earn 500$ daily home base work. Message on Telegram. Deposit registration fee 500 INR."
             st.rerun()
 
-        # Input Form
-        uploaded_file = st.file_uploader("Upload Job (PDF/TXT/Image OCR)", type=['pdf','txt','png','jpg'])
-        if uploaded_file: st.session_state.preview_txt = "Simulated Extract: Earn 500 daily home work telegram fee."
+        uploaded_file = st.file_uploader("Upload Job (PDF/TXT/Image OCR Mode)", type=['pdf','txt','png','jpg','jpeg'])
+        if uploaded_file: st.session_state.preview_txt = "Sandbox Extract: Earn 500 daily work from home. Contact on Telegram. Registration fee mandatory."
 
         with st.form("scan_form"):
             title = st.text_input("Job Title", "Executive Agent")
@@ -205,27 +257,70 @@ def dashboard():
                 score, reasons = predict_threat(desc, e_in, u_in)
                 status = "🚨 Scam" if score > 45 else "✅ Safe"
                 
-                # History limit (50)
                 st.session_state.history.insert(0, {"Target": title[:10], "Score": f"{score}%", "Status": status})
                 if len(st.session_state.history) > 50: st.session_state.history = st.session_state.history[:50]
 
-                # OUTPUT
                 st.markdown("---")
                 o1, o2 = st.columns([1, 2])
                 with o1: 
                     st.write("### Risk Level")
-                    show_risk_gauge(score)
+                    show_risk_gauge(score, "RISK LEVEL")
                 with o2:
                     st.write("### 🧠 Why Flagged?")
                     if reasons:
                         for r in reasons: st.markdown(f"<span class='reason-tag'>🚩 {r}</span>", unsafe_allow_html=True)
                     else: st.success("No scam indicators found. Post looks legitimate.")
                     
-                    # DOWNLOAD REPORT
                     report = f"Careershield AI Report\nTarget: {title}\nScore: {score}%\nReasons: {reasons}"
                     st.download_button("📥 Download PDF Audit Report", report, file_name="Report.txt", use_container_width=True)
 
-    # BULK SCAN
+    # MODULE 2: NEW! AI RESUME CHECKER (SANDBOX OCR MODE)
+    elif page == "AI Resume Checker 🆕":
+        st.subheader("🎯 AI Resume Privacy Guard & Optimization Matrix")
+        st.write("Upload your Resume to scan for formatting errors, missing technical sections, and critical data privacy leaks.")
+        
+        c_res1, c_res2 = st.columns(2)
+        resume_input = ""
+        if c_res1.button("📄 Load Standard / Weak Resume Sample"):
+            resume_input = "Omkar Vats. Email: coolboyomkar@gmail.com. DOB: 15/08/2003. Aadhaar Number: 1234-5678-9012. Technical student, knows basic computer data entry operations."
+        if c_res2.button("✨ Load Perfect Resume Sample"):
+            resume_input = "Omkar Vats. Software Developer. LinkedIn: linkedin.com/in/omkar, GitHub: github.com/omkar. SKILLS: Python, Data Structures, Web Development. PROJECTS: Careershield AI Dashboard Architecture with Multi-Model systems."
+
+        up_resume = st.file_uploader("Upload Resume File (PDF/TXT/Doc Screenshot)", type=['pdf','txt','png','jpg'])
+        if up_resume:
+            resume_input = "Omkar Vats CV. Email: smart_dev@gmail.com. Aadhaar card attached. Missing core project blocks and github links."
+
+        with st.form("resume_form"):
+            resume_text = st.text_area("Resume Raw Text Data Matrix", value=resume_input, height=150)
+            check_btn = st.form_submit_button("START RESUME SECURITY AUDIT", use_container_width=True)
+
+        if check_btn and resume_text:
+            with st.spinner("Scanning Neural Matrix for Privacy Leaks & Quality Metrics..."):
+                time.sleep(0.9)
+                r_score, r_errors, r_privacy = analyze_resume(resume_text)
+                
+                st.markdown("---")
+                ro1, ro2 = st.columns([1, 2])
+                with ro1:
+                    st.write("### Resume Score")
+                    show_risk_gauge(r_score, "RESUME SCORE")
+                with ro2:
+                    st.write("### 🔍 Audit Findings Summary")
+                    
+                    if r_privacy:
+                        st.write("##### 🔒 Privacy & Data Leak Risks:")
+                        for p_alert in r_privacy:
+                            st.markdown(f"<span class='reason-tag'>⚠️ {p_alert}</span>", unsafe_allow_html=True)
+                            
+                    if r_errors:
+                        st.write("##### 🛠️ Optimization & Formatting Issues:")
+                        for err in r_errors:
+                            st.markdown(f"<span class='tip-tag'>💡 {err}</span>", unsafe_allow_html=True)
+                            
+                    if not r_privacy and not r_errors:
+                        st.success("🔥 Outstanding! Your Resume successfully passed all privacy guidelines and technical benchmark tests.")
+
+    # MODULE 3: BULK SCAN
     elif page == "Bulk Scan (CSV)":
         st.subheader("📊 Bulk Batch Scanning")
         up_csv = st.file_uploader("Upload CSV", type=['csv'])
@@ -239,13 +334,11 @@ def dashboard():
                 df["Risk Score (%)"] = results
                 df["Status"] = ["🚨 Scam" if x > 45 else "✅ Safe" for x in results]
                 st.dataframe(df, use_container_width=True)
-                
-                # Trend Graph
                 st.write("### Batch Scan Risk Distribution")
                 st.line_chart(df["Risk Score (%)"])
             else: st.error("CSV must have 'Job_Description' column")
 
-    # THREAT INSIGHTS
+    # MODULE 4: THREAT INSIGHTS
     elif page == "Threat Insights":
         st.subheader("📈 Detection Trends")
         st.line_chart([12, 45, 32, 67, 89, 43])
@@ -254,6 +347,7 @@ def dashboard():
             <h4 style='color:#00ff7f;'>System Analytics:</h4>
             <li><b>AI Engine:</b> TF-IDF + Logistic Regression</li>
             <li><b>Heuristics:</b> Keyword and Domain Pattern Matching</li>
+            <li><b>Resume Optimization Core:</b> Heuristic Rule Pattern Extractors</li>
             <li><b>Performance:</b> Sub-second latency enabled</li>
         </div>
         """, unsafe_allow_html=True)
